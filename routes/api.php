@@ -12,7 +12,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
 
     Route::post('/orders', [OrderController::class, 'store']);
-    Route::get('/orders/{orderRef}', [OrderController::class, 'show']);
 
     Route::post('/demo/race', [DemoController::class, 'race']);
     Route::get('/demo/race-result/{productId}', [DemoController::class, 'raceResult']);

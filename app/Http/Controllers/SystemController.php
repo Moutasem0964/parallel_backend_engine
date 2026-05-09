@@ -67,13 +67,7 @@ class SystemController extends Controller
         \Illuminate\Support\Facades\Redis::flushdb();
 
         return response()->json([
-            'message' => 'World reset. Database fresh + seeded. Redis flushed.',
-            'next_steps' => [
-                'Submit Order' => 'POST /api/v1/orders',
-                'Race Demo' => 'POST /api/v1/demo/race',
-                'Idempotency Demo' => 'POST /api/v1/demo/duplicate',
-                'Batch' => 'POST /api/v1/reports/daily/<date>',
-            ],
+            'message' => 'reset complete. Database fresh + seeded. Redis flushed.'
         ]);
     }
 

@@ -31,11 +31,6 @@ class DemoController extends Controller
             Product::where('id', $productId)->update(['stock' => $setStock]);
         }
 
-        $beforeStock = Product::find($productId)->stock;
-        $beforeOrderCount = Order::whereHas('items', fn($q) => $q->where('product_id', $productId))
-            ->where('status', Order::STATUS_COMPLETED)
-            ->count();
-
         $dispatched = [];
         for ($i = 0; $i < $concurrency; $i++) {
             $orderRef = Str::uuid()->toString();
@@ -47,8 +42,6 @@ class DemoController extends Controller
 
         return response()->json([
             'message' => "Dispatched {$concurrency} concurrent orders for product {$productId}",
-            'product_initial_stock' => $beforeStock,
-            'completed_orders_before' => $beforeOrderCount,
             'orders_dispatched' => count($dispatched),
             'next_step' => "Wait 3-5s then GET /api/v1/demo/race-result/{$productId}",
             'note' => 'Result endpoint compares completed_orders_for_product to initial_stock to detect oversell',
@@ -63,19 +56,13 @@ class DemoController extends Controller
             ->where('status', Order::STATUS_COMPLETED)
             ->count();
 
-        $expectedStock = max(0, Product::find($productId)->stock);
         $oversold = $product->stock < 0;
 
         return response()->json([
             'product_id' => $productId,
             'final_stock' => $product->stock,
             'completed_orders' => $orderCount,
-            'oversold' => $oversold,
-            'verdict' => $oversold
-                ? 'RACE CONDITION — stock is negative, locking is broken'
-                : ($orderCount > 0 && $product->stock === 0
-                    ? 'CORRECT — exactly inventory was sold, no oversell'
-                    : 'CORRECT — locking prevented overselling'),
+            'oversold' => $oversold
         ]);
     }
 

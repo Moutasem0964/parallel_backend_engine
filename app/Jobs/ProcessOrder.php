@@ -57,7 +57,7 @@ class ProcessOrder implements ShouldQueue
                         ->lockForUpdate()
                         ->first();
 
-                    // usleep(1000000); // 100ms
+                     //usleep(1000000);
 
                     if (!$product || $product->stock < $item['quantity']) {
                         throw new \RuntimeException(
